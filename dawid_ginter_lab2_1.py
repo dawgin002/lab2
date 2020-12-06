@@ -3,14 +3,17 @@ import pandas as pd
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+from yellowbrick.cluster import SilhouetteVisualizer
 
 input_file = "Sales_Transactions_Dataset_Weekly.csv"
+
+no_of_clusters = 5
 
 # Możliwe rodzaje wskaźników
 all_poss = ['.', 'o', 'v', '^', '>', '<', 's',
             'p', '*', 'h', 'H', 'D', 'd', '1', '', '']
 
-
+# fig, ax = plt.subplots(2    , 2, figsize=(15, 8))
 # Zadanie 1 - ładowanie danych z pliku
 
 data_source = pd.read_csv(input_file, sep=",", header=0, index_col=0)
@@ -20,13 +23,17 @@ scikit_input_data = data_source.to_numpy()
 
 # KMeans
 
-kmeans = KMeans(n_clusters=5, init="random")
+kmeans = KMeans(n_clusters=no_of_clusters, init="random")
 
 label = kmeans.fit_predict(scikit_input_data)
 
 # KMeans++
 
-kmeans_pp = KMeans(n_clusters=5, init="k-means++")
+kmeans_pp = KMeans(n_clusters=no_of_clusters, init="k-means++")
+# q, mod = divmod(no_of_clusters, 2)
+visualizer = SilhouetteVisualizer(
+    kmeans_pp, colors='yellowbrick')
+visualizer.fit(scikit_input_data)
 
 labels = np.unique(label)
 
